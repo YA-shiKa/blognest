@@ -171,7 +171,7 @@ exports.updatePost = asyncHandler(async (req, res) => {
 
 //delete post
 exports.deletePost = asyncHandler(async (req, res) => {
-  //find the post
+  //find post
   const post = await Post.findById(req.params.id);
   if (!post) {
     return res.render("postDetails", {

@@ -48,38 +48,66 @@ exports.getEditProfileForm = asyncHandler(async (req, res) => {
   });
 });
 //Update profile
-exports.updateUserProfile = asyncHandler(async (req, res) => {
-  const { username, email, bio } = req.body;
-  const user = await User.findById(req.user._id);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
+exports.updateUserProfile = async (req, res) => {
+  try {
+    console.log("=== UPDATE PROFILE ===");
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
 
-  user.username = username || user.username;
-  user.email = email || user.email;
-  user.bio = bio || user.bio;
+    const { username, email, bio } = req.body;
+    const user = await User.findById(req.user._id);
 
-  if (req.file) {
-    if (user.profilePicture && user.profilePicture.public_id) {
-      await cloudinary.uploader.destroy(user.profilePicture.public_id);
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).render("editProfile", {
+        title: "Edit Profile",
+        user: null,
+        error: "User not found",
+      });
     }
-    const file = new File({
-      url: req.file.path,
-      public_id: req.file.filename,
-      uploaded_by: req.user._id,
-    });
-    await file.save();
-    user.profilePicture = { url: file.url, public_id: file.public_id };
-  }
 
-  await user.save();
-  res.render("editProfile", {
-    title: "Edit Profile",
-    user,
-    error: null,
-    success: "Profile updated successfully",
-  });
-});
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.bio = bio || user.bio;
+
+    if (req.file) {
+      console.log("New profile picture detected");
+
+      if (user.profilePicture && user.profilePicture.public_id) {
+        console.log("Deleting old profile pic from cloudinary:", user.profilePicture.public_id);
+        await cloudinary.uploader.destroy(user.profilePicture.public_id);
+      }
+
+      const file = new File({
+        url: req.file.path,
+        public_id: req.file.filename,
+        uploaded_by: req.user._id,
+      });
+
+      await file.save();
+      user.profilePicture = { url: file.url, public_id: file.public_id };
+    }
+
+    await user.save();
+
+    console.log("Profile updated successfully");
+    res.render("editProfile", {
+      title: "Edit Profile",
+      user,
+      error: null,
+      success: "Profile updated successfully",
+    });
+
+  } catch (err) {
+    console.error("Update profile failed:", err);
+    res.status(500).render("editProfile", {
+      title: "Edit Profile",
+      user: req.user,
+      error: "Something went wrong. Please try again.",
+    });
+  }
+};
+
 
 //Delete user account
 exports.deleteUserAccount = asyncHandler(async (req, res) => {
