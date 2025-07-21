@@ -1,8 +1,47 @@
 <%- include('partials/header', { title: 'Edit Profile', user: user }) %>
 
+<style>
+  body {
+    background-image: url('data:image/jpeg;base64,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');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .card {
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-header {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    background-color: #000 !important;
+    color: white;
+    text-align: center;
+  }
+
+  .btn-primary {
+    background-color: #000 !important;
+    border-color: #000 !important;
+    font-weight: bold;
+    border-radius: 0.5rem;
+  }
+
+  .form-control {
+    border-radius: 0.5rem;
+  }
+
+  .form-label {
+    font-weight: 500;
+  }
+</style>
+
 <div class="container mt-5">
   <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header">
       <h2 class="mb-0">Edit Profile</h2>
     </div>
     <div class="card-body">
@@ -23,6 +62,7 @@
             required
           />
         </div>
+
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
           <input
@@ -34,12 +74,12 @@
             required
           />
         </div>
+
         <div class="mb-3">
           <label for="bio" class="form-label">Bio</label>
-          <textarea class="form-control" name="bio" id="bio" rows="3">
-<%= user.bio %></textarea
-          >
+          <textarea class="form-control" name="bio" id="bio" rows="3"><%= user.bio %></textarea>
         </div>
+
         <div class="mb-3">
           <label for="profilePicture" class="form-label">Profile Picture</label>
           <input
@@ -66,6 +106,7 @@
             />
           </div>
         </div>
+
         <button type="submit" class="btn btn-primary">
           <i class="fas fa-save"></i> Update Profile
         </button>

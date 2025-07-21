@@ -14,40 +14,37 @@ exports.getPostForm = asyncHandler((req, res) => {
 });
 
 //Creating new post
+//Creating new post
 exports.createPost = asyncHandler(async (req, res) => {
   const { title, content } = req.body;
-  //validation
-  if (!req.files || req.files.length === 0) {
-    return res.render("newPost", {
-      title: "Create Post",
-      user: req.user,
-      error: "At least one image is required",
-      success: "",
-    });
+
+  let images = [];
+
+  // If images are uploaded, process them
+  if (req.files && req.files.length > 0) {
+    images = await Promise.all(
+      req.files.map(async (file) => {
+        const newFile = new File({
+          url: file.path,
+          public_id: file.filename,
+          uploaded_by: req.user._id,
+        });
+        await newFile.save();
+        return {
+          url: newFile.url,
+          public_id: newFile.public_id,
+        };
+      })
+    );
   }
-  const images = await Promise.all(
-    req.files.map(async (file) => {
-      //save the images into our database
-      const newFile = new File({
-        url: file.path,
-        public_id: file.filename,
-        uploaded_by: req.user._id,
-      });
-      await newFile.save();
-      console.log(newFile);
-      return {
-        url: newFile.url,
-        public_id: newFile.public_id,
-      };
-    })
-  );
-  //create post
+
   const newPost = new Post({
     title,
     content,
     author: req.user._id,
-    images,
+    images, // This can be empty now
   });
+
   await newPost.save();
 
   res.render("newPost", {
@@ -119,8 +116,8 @@ exports.getEditPostForm = asyncHandler(async (req, res) => {
 //update post
 exports.updatePost = asyncHandler(async (req, res) => {
   const { title, content } = req.body;
-  //find the post
   const post = await Post.findById(req.params.id);
+
   if (!post) {
     return res.render("postDetails", {
       title: "Post",
@@ -143,28 +140,33 @@ exports.updatePost = asyncHandler(async (req, res) => {
 
   post.title = title || post.title;
   post.content = content || post.content;
-  if (req.files) {
+
+  // Update images only if new files are uploaded
+  if (req.files && req.files.length > 0) {
+    // Delete old images
     await Promise.all(
       post.images.map(async (image) => {
         await cloudinary.uploader.destroy(image.public_id);
       })
     );
+
+    // Save new images
+    post.images = await Promise.all(
+      req.files.map(async (file) => {
+        const newFile = new File({
+          url: file.path,
+          public_id: file.filename,
+          uploaded_by: req.user._id,
+        });
+        await newFile.save();
+        return {
+          url: newFile.url,
+          public_id: newFile.public_id,
+        };
+      })
+    );
   }
-  post.images = await Promise.all(
-    req.files.map(async (file) => {
-      const newFile = new File({
-        url: file.path,
-        public_id: file.filename,
-        uploaded_by: req.user._id,
-      });
-      await newFile.save();
-      return {
-        url: newFile.url,
-        public_id: newFile.public_id,
-      };
-    })
-  );
-  console.log(post);
+
   await post.save();
   res.redirect(`/posts/${post._id}`);
 });

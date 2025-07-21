@@ -13,6 +13,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const commentRoutes = require("./routes/commentRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+app.use(express.static('public'));
 
 //port
 const PORT = process.env.PORT || 3000;
