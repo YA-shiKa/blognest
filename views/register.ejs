@@ -1,14 +1,6 @@
 <%- include('partials/header', { title: 'Register', user: user }) %>
 
 <style>
-  body {
-    background-image: url('https://www.google.com/imgres?q=image%20mix%20of%20green%20and%20brown%20like%20in%20woods%20for%20a%20site&imgurl=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F16980767%2Fpexels-photo-16980767%2Ffree-photo-of-a-path-in-a-forest.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26dpr%3D1%26w%3D500&imgrefurl=https%3A%2F%2Fwww.pexels.com%2Fphoto%2Fbrown-trees-on-the-field-11193458%2F&docid=7j3Ir3QUwR6SmM&tbnid=If9G5xMSfmALaM&vet=12ahUKEwiW1NL0qs6OAxW8nq8BHeKUALUQM3oECEQQAA..i&w=500&h=333&hcb=2&itg=1&ved=2ahUKEwiW1NL0qs6OAxW8nq8BHeKUALUQM3oECEQQAA');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-
   .card {
     border-radius: 1rem;
     background-color: rgba(255, 255, 255, 0.9);
@@ -19,7 +11,7 @@
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
     text-align: center;
-    background-color: #000 !important; /* Changed from bg-primary to black */
+    background-color: #007bff !important; 
     color: white;
   }
 
@@ -32,17 +24,30 @@
   }
 
   .btn-primary {
-    background-color: #000 !important; /* Changed from blue to black */
-    border-color: #000 !important;
+    background-color: #007bff !important; /* Blue background */
+    border-color: #007bff !important;
     border-radius: 0.5rem;
     font-weight: bold;
+    color: white;
   }
 
   .btn-primary:hover {
-    background-color: #333 !important;
-    border-color: #333 !important;
+    background-color: #0056b3 !important; /* Darker blue on hover */
+    border-color: #0056b3 !important;
+  }
+
+  .login-link {
+    color: #007bff !important;
+    font-weight: normal !important;
+    text-decoration: none;
+  }
+
+  .login-link:hover {
+    text-decoration: underline;
   }
 </style>
+
+
 
 <div class="d-flex align-items-center justify-content-center vh-100">
   <div class="col-lg-4 col-md-6 col-sm-10">
@@ -99,7 +104,8 @@
 
         <div class="mt-3 text-center">
   <p>Already have an account?
-    <a href="/auth/login" style="color: black; font-weight: bold;">Login</a>
+    <a href="/auth/login" class="login-link">Login</a>
+
   </p>
 </div>
 
